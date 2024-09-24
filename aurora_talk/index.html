@@ -8,10 +8,11 @@
 <link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="index_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.551">
+  <meta name="generator" content="quarto-1.4.533">
 
   <meta name="author" content="Dennis Sun">
-  <title>AURORA: Fully Nonparametric Empirical Bayes</title>
+  <meta name="dcterms.date" content="2024-09-24">
+  <title>Empirical Bayes Mean Estimation by Regression</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -545,7 +546,7 @@
   };
 
   // Store cell data
-  globalThis.qwebrCellDetails = [{"code":"mus <- rnorm(10000, sd=3)\nx <- mus + rnorm(10000)\ny <- mus + rnorm(10000)\ndf <- data.frame(x=x, y=y)\n\nlibrary(ggplot2)\nggplot(df, aes(x=x, y=y)) + geom_point() +\n  geom_smooth()","id":1,"options":{"message":"true","warning":"true","context":"interactive","comment":"","results":"markup","editor-max-height":"","out-width":"700px","label":"unnamed-chunk-1","out-height":"","fig-cap":"","autorun":"false","fig-width":7,"fig-height":5,"classes":"","dpi":72,"editor-quick-suggestions":"false","editor-font-scale":"0.7","read-only":"false","output":"true"}},{"code":"# generate data\nN <- 30000\nK <- 10\nmus <- rnorm(N, sd=2)\nz <- matrix(mus, nrow=N, ncol=K) + matrix(rnorm(N * K), nrow=N)\n\n# split off last replicate and sort the rest\ny <- z[, K]\nx <- t(apply(z[, -K], 1, sort))\n\n# regress last replicate on the order statistics\nmodel <- lm(y ~ x)\nbarplot(model$coef)","id":2,"options":{"message":"true","warning":"true","context":"interactive","comment":"","results":"markup","editor-max-height":"","out-width":"700px","label":"unnamed-chunk-2","out-height":"","fig-cap":"","autorun":"false","fig-width":7,"fig-height":5,"classes":"","dpi":72,"editor-quick-suggestions":"false","editor-font-scale":"0.7","read-only":"false","output":"true"}}];
+  globalThis.qwebrCellDetails = [{"options":{"editor-max-height":"","classes":"","read-only":"false","comment":"","fig-cap":"","autorun":"false","editor-font-scale":"0.7","results":"markup","editor-quick-suggestions":"false","label":"unnamed-chunk-1","out-width":"700px","dpi":72,"fig-height":5,"out-height":"","warning":"true","output":"true","fig-width":7,"context":"interactive","message":"true"},"id":1,"code":"mus <- rnorm(10000, sd=3)\nx <- mus + rnorm(10000)\ny <- mus + rnorm(10000)\ndf <- data.frame(x=x, y=y)\n\nlibrary(ggplot2)\nggplot(df, aes(x=x, y=y)) + geom_point() +\n  geom_smooth()"},{"options":{"editor-max-height":"","classes":"","read-only":"false","comment":"","fig-cap":"","autorun":"false","editor-font-scale":"0.7","results":"markup","editor-quick-suggestions":"false","label":"unnamed-chunk-2","out-width":"700px","dpi":72,"fig-height":5,"out-height":"","warning":"true","output":"true","fig-width":7,"context":"interactive","message":"true"},"id":2,"code":"# generate data\nN <- 30000\nK <- 10\nmus <- rnorm(N, sd=2)\nz <- matrix(mus, nrow=N, ncol=K) + matrix(rnorm(N * K), nrow=N)\n\n# split off last replicate and sort the rest\ny <- z[, K]\nx <- t(apply(z[, -K], 1, sort))\n\n# regress last replicate on the order statistics\nmodel <- lm(y ~ x)\nbarplot(model$coef)"},{"options":{"editor-max-height":"","classes":"","read-only":"false","comment":"","fig-cap":"","autorun":"false","editor-font-scale":"0.7","results":"markup","editor-quick-suggestions":"false","label":"unnamed-chunk-3","out-width":"700px","dpi":72,"fig-height":5,"out-height":"","warning":"true","output":"true","fig-width":7,"context":"interactive","message":"true"},"id":3,"code":"mus <- rnorm(10000, sd=3)\nz <- mus + rnorm(10000)\n\ntau <- 1\neps <- rnorm(10000, sd=0.5)\nx <- z + tau * eps\ny <- z - eps / tau\ndf <- data.frame(x=x, y=y)\n\nlibrary(ggplot2)\nggplot(df, aes(x=x, y=y)) + geom_point() +\n  geom_smooth()"}];
 
   </script>
   <script type="module">
@@ -1614,7 +1615,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">AURORA: Fully Nonparametric Empirical Bayes</h1>
+  <h1 class="title">Empirical Bayes Mean Estimation by Regression</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -1624,6 +1625,7 @@ Dennis Sun
 </div>
 </div>
 
+  <p class="date">2024-09-24</p>
 </section>
 <section id="collaborators" class="slide level2 smaller scrollable">
 <h2>Collaborators</h2>
@@ -1643,24 +1645,71 @@ Dennis Sun
 </div><p>Nikolaos Ignatiadis, Sujayam Saha, Dennis L. Sun &amp; Omkar Muralidharan (2023) <a href="https://www-tandfonline-com.stanford.idm.oclc.org/doi/full/10.1080/01621459.2021.1967164">Empirical Bayes Mean Estimation With Nonparametric Errors Via Order Statistic Regression on Replicated Data</a>, <em>Journal of the American Statistical Association</em>, 118:542, 987-999, DOI: 10.1080/01621459.2021.1967164</p>
 </div>
 </section>
-<section id="what-is-this-talk-about" class="slide level2">
-<h2>What is this talk about?</h2>
+<section>
+<section id="motivation" class="title-slide slide level1 center">
+<h1>Motivation</h1>
+
+</section>
+<section id="estimating-many-means" class="slide level2">
+<h2>Estimating Many Means</h2>
+<p>Many problems in the real world involve estimating many means <span class="math inline">\(\mu_1, \mu_2, \dots, \mu_N\)</span> from noisy data.</p>
 <div>
 <ul>
-<li class="fragment">A real problem in Google Ads</li>
-<li class="fragment">An elegant statistical method that deserves to be better known</li>
-<li class="fragment">Lots of connections to Stanford Statistics, past and present</li>
+<li class="fragment">the expected number of insurance claims that each customer will make</li>
+<li class="fragment">the final batting average of MLB players</li>
+<li class="fragment">the true expression of each of genes</li>
+<li class="fragment">the true cost-per-click of each of advertisers</li>
+</ul>
+</div>
+<!-- ## What is this talk about? -->
+<!-- ::: {.incremental} -->
+<!-- - A real problem in Google Ads -->
+<!-- - An elegant statistical method that deserves to be better known -->
+<!-- - Lots of connections to Stanford Statistics, past and present -->
+<!-- ::: -->
+<!-- ## Motivating Example {.scrollable} -->
+<!-- ::: {.incremental} -->
+<!-- - Google has $N$ advertisers. -->
+<!-- - For each advertiser $i = 1, ..., N$, we want to estimate some quantity $\mu_i$ (e.g., cost-per-click) from noisy observations $Z_i$. -->
+<!-- ::: -->
+<!-- . . . -->
+<!-- ```{r engine='tikz'} -->
+<!-- #| out-width: 60% -->
+<!-- \begin{tikzpicture}[every node/.style={circle,}] -->
+<!-- \node (root) at (0, 2) {}; -->
+<!-- \node[draw] (mu1) at (-3, 0) {$\mu_1$}; -->
+<!-- \node[draw] (mu2) at (-1, 0) {$\mu_2$}; -->
+<!-- \node at (1, 0) {$\dots$}; -->
+<!-- \node[draw] (muN) at (3, 0) {$\mu_N$}; -->
+<!-- \draw (root) -- (mu1); -->
+<!-- \draw (root) -- (mu2); -->
+<!-- \draw (root) -- (muN); -->
+<!-- \node[draw] (z1) at (-3, -2) {$Z_1$}; -->
+<!-- \node[draw] (z2) at (-1, -2) {$Z_2$}; -->
+<!-- \node at (1, -2) {$\dots$}; -->
+<!-- \node[draw] (zN) at (3, -2) {$Z_N$}; -->
+<!-- \draw (z1) -- (mu1); -->
+<!-- \draw (z2) -- (mu2); -->
+<!-- \draw (zN) -- (muN); -->
+<!-- \node[anchor=west] at (4, 1) {$\mu_i \sim G$}; -->
+<!-- \node[anchor=west] at (4, -1) {$Z_i | \mu_i \sim F(\cdot | {\mu_i})$}; -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
+</section>
+<section id="obvious-but-wrong-approach" class="slide level2">
+<h2>Obvious (but Wrong) Approach</h2>
+<p>Estimate each <span class="math inline">\(\mu_i\)</span> by <span class="math inline">\(Z_i\)</span> for <span class="math inline">\(i=1, ..., N\)</span>.</p>
+<div>
+<ul>
+<li class="fragment">For <span class="math inline">\(N &gt; 2\)</span>, this estimator is inadmissible if <span class="math inline">\(Z_i\)</span> are independent <span class="math inline">\(\text{Normal}(\mu_i, 1)\)</span>. <span class="citation" data-cites="stein1956inadmissibility">(<a href="#/summary" role="doc-biblioref" onclick="">Stein 1956</a>)</span></li>
+<li class="fragment">Intuitively: there is little data for some advertisers, and we can do better by “borrowing strength” across all advertisers.</li>
+<li class="fragment">A better estimator is the James-Stein estimator (1961): <span class="math display">\[ \hat{\mu}_{JS} = \left( 1 - \frac{N-2}{||{\bf Z}||^2} \right) {\bf Z} \]</span></li>
 </ul>
 </div>
 </section>
-<section id="motivating-example" class="slide level2 scrollable">
-<h2>Motivating Example</h2>
-<div>
-<ul>
-<li class="fragment">Google has <span class="math inline">\(N\)</span> advertisers.</li>
-<li class="fragment">For each advertiser <span class="math inline">\(i = 1, ..., N\)</span>, we want to estimate some quantity <span class="math inline">\(\mu_i\)</span> (e.g., cost-per-click) from noisy observations <span class="math inline">\(Z_i\)</span>.</li>
-</ul>
-</div>
+<section id="empirical-bayes" class="slide level2 smaller">
+<h2>Empirical Bayes</h2>
+<p><span class="citation" data-cites="efron1973stein">Efron and Morris (<a href="#/summary" role="doc-biblioref" onclick="">1973</a>)</span> showed one way to derive the James-Stein estimator within a Bayesian model.</p>
 <div class="fragment">
 <div class="cell">
 <div class="cell-output-display">
@@ -1671,73 +1720,54 @@ Dennis Sun
 </div>
 </div>
 </div>
-</div>
-</section>
-<section id="obvious-but-wrong-approach" class="slide level2">
-<h2>Obvious (but Wrong) Approach</h2>
-<p>Estimate each <span class="math inline">\(\mu_i\)</span> by <span class="math inline">\(Z_i\)</span> for <span class="math inline">\(i=1, ..., N\)</span>.</p>
 <div>
 <ul>
-<li class="fragment">For <span class="math inline">\(N &gt; 2\)</span>, this estimator is inadmissible even if <span class="math inline">\(Z_i\)</span> are independent <span class="math inline">\(\text{Normal}(\mu_i, 1)\)</span>. <span class="citation" data-cites="stein1956inadmissibility">(<a href="#/summary" role="doc-biblioref" onclick="">Stein 1956</a>)</span></li>
-<li class="fragment">Intuitively: there is little data for some advertisers, and we can do better by “borrowing” data from other advertisers.</li>
-<li class="fragment">A better estimator is the James-Stein estimator (1961): <span class="math display">\[ \hat{\mu}_{JS} = \left( 1 - \frac{N-2}{||{\bf Z}||^2} \right) {\bf Z} \]</span></li>
-</ul>
-</div>
-</section>
-<section id="empirical-bayes" class="slide level2">
-<h2>Empirical Bayes</h2>
-<p><span class="citation" data-cites="efron1973stein">Efron and Morris (<a href="#/summary" role="doc-biblioref" onclick="">1973</a>)</span> showed that the James-Stein estimator can be derived from Empirical Bayes.</p>
-<div class="fragment">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" style="width:60.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div class="fragment">
-<div>
-<ul>
-<li class="fragment">The Bayes estimator <span class="math inline">\(E[\mu | {\bf Z}]\)</span> depends on <span class="math inline">\(A\)</span>.</li>
+<li class="fragment">The Bayes estimator <span class="math inline">\(E[\mu | {\bf Z}]\)</span> is optimal, but it depends on the unknown <span class="math inline">\(A\)</span>.</li>
+<li class="fragment">Empirical Bayes says to approximate the Bayes rule using all of the data.</li>
 <li class="fragment">By plugging in a suitable estimate <span class="math inline">\(\hat A\)</span>, we recover <span class="math inline">\(\hat\mu_{JS}\)</span>.</li>
 </ul>
 </div>
-</div>
-</section>
-<section id="nonparametric-empirical-bayes" class="slide level2">
-<h2>Nonparametric Empirical Bayes</h2>
-<p>Can we avoid parametric assumptions entirely?</p>
-<div class="fragment">
-<p><strong>Not without more structure.</strong></p>
-</div>
-<div class="fragment">
-<ul>
-<li>Most of the literature makes no assumptions about the prior <span class="math inline">\(G\)</span>, but assumes the likelihood <span class="math inline">\(F(\cdot | \mu_i)\)</span> is <span class="math inline">\(\text{Normal}(\mu_i, 1)\)</span>.</li>
-</ul>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-3-1.png" style="width:60.0%"></p>
-</figure>
-</div>
-</div>
-</div>
+<!-- ## Nonparametric Empirical Bayes -->
+<!-- Can we avoid parametric assumptions entirely? -->
+<!-- . . . -->
+<!-- **Not without more structure.** -->
+<!-- . . . -->
+<!-- - Most of the literature makes no assumptions about the prior $G$, but assumes -->
+<!-- the likelihood $F(\cdot | \mu_i)$ is $\text{Normal}(\mu_i, 1)$. -->
+<!-- ```{r engine='tikz'} -->
+<!-- #| out-width: 60% -->
+<!-- \begin{tikzpicture}[every node/.style={circle,}] -->
+<!-- \node (root) at (0, 2) {}; -->
+<!-- \node[draw] (mu1) at (-3, 0) {$\mu_1$}; -->
+<!-- \node[draw] (mu2) at (-1, 0) {$\mu_2$}; -->
+<!-- \node at (1, 0) {$\dots$}; -->
+<!-- \node[draw] (muN) at (3, 0) {$\mu_N$}; -->
+<!-- \draw (root) -- (mu1); -->
+<!-- \draw (root) -- (mu2); -->
+<!-- \draw (root) -- (muN); -->
+<!-- \node[draw] (z1) at (-3, -2) {$Z_1$}; -->
+<!-- \node[draw] (z2) at (-1, -2) {$Z_2$}; -->
+<!-- \node at (1, -2) {$\dots$}; -->
+<!-- \node[draw] (zN) at (3, -2) {$Z_N$}; -->
+<!-- \draw (z1) -- (mu1); -->
+<!-- \draw (z2) -- (mu2); -->
+<!-- \draw (zN) -- (muN); -->
+<!-- \node[anchor=west] at (4, 1) {$\mu_i \sim G$}; -->
+<!-- \node[anchor=west] at (4, -1) {$Z_i | \mu_i \sim \text{Normal}(\mu_i, 1)$}; -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
 </div>
 </section>
 <section id="replicates" class="slide level2">
 <h2>Replicates</h2>
-<p>At Google, we have multiple replicates for each advertiser <span class="math inline">\(i\)</span>.</p>
+<p>In some applications, we have multiple replicates for each unit <span class="math inline">\(i\)</span>.</p>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:60.0%" class="r-stretch"><div class="fragment">
+<img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" style="width:60.0%" class="r-stretch"><div class="fragment">
 <p>This replication allows us to do fully nonparametric Empirical Bayes.</p>
 </div>
 </section>
-<section id="why-do-replicates-help" class="slide level2">
-<h2>Why Do Replicates Help?</h2>
+<section id="how-does-replication-help" class="slide level2">
+<h2>How Does Replication Help?</h2>
 <div>
 <ul>
 <li class="fragment">Say we have only 2 replicates <span class="math inline">\((K=2)\)</span>. We can split them into two parts: <span class="math display">\[ (X_i, Y_i) := (Z_{i1}, Z_{i2})=\mathbf{Z}_i \]</span></li>
@@ -1746,19 +1776,19 @@ Dennis Sun
 </div>
 <div class="fragment">
 <div class="columns">
-<div class="column" style="width:18%;">
+<div class="column" style="width:20%;">
 <p><span class="math inline">\(\displaystyle E[Y_i | X_i] =\)</span></p>
-</div><div class="column" style="width:36%;">
+</div><div class="column" style="width:40%;">
 <div class="fragment">
 <p><span class="math inline">\(\displaystyle E\big[E[Y_i | \mu_i, X_i] \big| X_i\big] =\)</span></p>
 </div>
-</div><div class="column" style="width:30%;">
+</div><div class="column" style="width:28%;">
 <div class="fragment">
 <p><span class="math inline">\(\displaystyle E\big[E[Y_i | \mu_i] \big| X_i\big] =\)</span></p>
 </div>
-</div><div class="column" style="width:16%;">
+</div><div class="column" style="width:12%;">
 <div class="fragment">
-<p><span class="math inline">\(\displaystyle E[ \mu_i | X_i]\)</span></p>
+<p><span class="math inline">\(\displaystyle = E[ \mu_i | X_i]\)</span></p>
 </div>
 </div>
 </div>
@@ -1769,10 +1799,47 @@ Dennis Sun
 </ul>
 </div>
 </section>
-<section id="example-for-k2" class="slide level2 scrollable smaller">
-<h2>Example for <span class="math inline">\(K=2\)</span></h2>
+<section id="simulation-of-eb-regression" class="slide level2 scrollable smaller">
+<h2>Simulation of EB Regression</h2>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="connection-with-james-stein" class="slide level2 smaller">
+<h2>Connection with James-Stein</h2>
+<div class="fragment">
+<p>Key insight is <span class="citation" data-cites="stigler1990galton">Stigler (<a href="#/summary" role="doc-biblioref" onclick="">1990</a>)</span>: “A Galtonian Perspective on Shrinkage Estimators.”</p>
+</div>
+<div class="fragment">
+<p>In the Efron-Morris model, the Bayes estimator (based on one replicate) is <span class="math display">\[ E_A[\mu_i | X_i] = \frac{\text{Cov}_A(X_i, \mu_i)}{\text{Var}_A(X_i)} X_i. \]</span></p>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div>
+<ul>
+<li class="fragment">Estimate <span class="math inline">\(\text{Var}_A(X_i)\)</span> by <span class="math inline">\(\frac{1}{N} ||{\bf X}||^2\)</span>.</li>
+<li class="fragment">Estimate <span class="math inline">\(\text{Cov}_A(X_i, \mu_i) = \text{Var}_A(\mu_i)\)</span> <span class="math inline">\(= \text{Var}_A(X_i) - 1\)</span> by <span class="math inline">\(\frac{1}{N} ||{\bf X}||^2 - 1\)</span>.</li>
+</ul>
+</div>
+<div class="fragment">
+<p>Resulting estimator is (close to) James-Stein: <span class="math display">\[ \frac{\frac{1}{N} ||{\bf X}||^2 - 1}{\frac{1}{N} ||{\bf X}||^2} X_i = \left(1 - \frac{N}{||{\bf X}||^2}\right) X_i. \]</span></p>
+</div>
+</div><div class="column" style="width:43%;">
+<div class="fragment">
+<p>Our approach uses the fact that <span class="math inline">\(E_A[\mu_i | X_i] = E_A[Y_i | X_i]\)</span>,</p>
+</div>
+<div class="fragment">
+<p>so we can also estimate the coefficient by linear regression:</p>
+</div>
+<div class="fragment">
+<p><span class="math display">\[ \frac{{\bf X} \cdot {\bf Y}}{|| {\bf X} ||^2} X_i. \]</span></p>
+</div>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="beyond-two-replicates" class="title-slide slide level1 center">
+<h1>Beyond Two Replicates</h1>
+
 </section>
 <section id="what-if-k-2" class="slide level2 smaller">
 <h2>What if <span class="math inline">\(K &gt; 2\)</span>?</h2>
@@ -1799,8 +1866,8 @@ Dennis Sun
 </ul>
 </div>
 </section>
-<section id="example-of-aurora" class="slide level2 scrollable smaller">
-<h2>Example of AURORA</h2>
+<section id="simulation-of-aurora" class="slide level2 scrollable smaller">
+<h2>Simulation of AURORA</h2>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
@@ -1816,21 +1883,16 @@ Dennis Sun
 \end{aligned}
 \]</span></p>
 </section>
-<section>
-<section id="data-example" class="title-slide slide level1 center">
-<h1>Data Example</h1>
-
-</section>
-<section id="replicates-at-google" class="slide level2 smaller">
-<h2>Replicates at Google</h2>
+<section id="data-example-replicates-at-google" class="slide level2 smaller">
+<h2>Data Example: Replicates at Google</h2>
 
 <img data-src="img/replicate_table_figure.png" class="r-stretch"><ul>
 <li>At Google: Each row is an advertiser, each column is a segment of users, measurement is change in cost-per-click (<span class="math inline">\(\Delta\)</span>CPC) or click-through rate.</li>
 <li>Chamandy, Nicholas, Omkar Muralidharan, Amir Najmi, and Siddartha Naidu. “Estimating uncertainty for massive data streams.” Google Technical Report (2012).</li>
 </ul>
 </section>
-<section id="results-on-google-data" class="slide level2 smaller">
-<h2>Results on Google Data</h2>
+<section id="data-example-results-on-google-data" class="slide level2 smaller">
+<h2>Data Example: Results on Google Data</h2>
 <div>
 <ul>
 <li class="fragment">Compare MSE of different estimators.</li>
@@ -1883,17 +1945,63 @@ Dennis Sun
 <ul>
 <li class="fragment">The held-out replicate <span class="math inline">\(Y_i := Z_{iK}\)</span> is arbitrary. We can hold out different replicates <span class="math inline">\(Z_{ij}\)</span> and average the <span class="math inline">\(K\)</span> estimates that we get. (“Rao-Blackwellization”)</li>
 <li class="fragment">We can estimate general <span class="math inline">\(U\)</span>-statistics <span class="math inline">\(E[h(Z_{i1},\dotsc,Z_{ir}) | \mu_i]\)</span>, not just <span class="math inline">\(\mu_i\)</span>.</li>
-<li class="fragment"><em>Open Question:</em> What do we do when there aren’t the same number of replicates for each unit?</li>
+<li class="fragment">What do we do when there aren’t the same number of replicates for each unit?</li>
 </ul>
 </div>
+</section></section>
+<section>
+<section id="one-replicate" class="title-slide slide level1 center">
+<h1>One Replicate</h1>
+
 </section>
-<section id="summary" class="slide level2 smaller scrollable">
-<h2>Summary</h2>
+<section id="what-if-k-1" class="slide level2">
+<h2>What if <span class="math inline">\(K = 1\)</span>?</h2>
+<p>What if there is only one observation <span class="math inline">\(Z_i\)</span> per mean?</p>
+<div class="fragment">
+<p>We can <em>split</em> the one observation into two replicates using <strong>data fission</strong> <span class="citation" data-cites="tian2018selective leiner2023data">(<a href="#/summary" role="doc-biblioref" onclick="">Tian and Taylor 2018</a>; <a href="#/summary" role="doc-biblioref" onclick="">Leiner et al. 2023</a>)</span> and apply AURORA.</p>
+</div>
+<div class="fragment">
+<div style="font-size: 80%;">
+<p>Nikolaos Ignatiadis and Dennis L. Sun. 2024+. “Empirical Bayes estimation via data fission.” To appear, <em>Journal of the American Statistical Association</em>.</p>
+</div>
+</div>
+</section>
+<section id="data-fission" class="slide level2">
+<h2>Data Fission</h2>
+<p>A single observation <span class="math inline">\(Z_i | \mu_i \sim \text{Normal}(\mu_i, 1)\)</span> can be split into <span class="math display">\[
+\begin{align}
+X_i &amp;:= Z_i + \tau \epsilon_i &amp; Y_i &amp;:= Z_i - \tau^{-1} \epsilon_i,
+\end{align}
+\]</span> where <span class="math inline">\(\epsilon_i\)</span> is independent <span class="math inline">\(\text{Normal}(0, \sigma^2)\)</span>.</p>
+<div class="fragment">
+<p>Because <span class="math inline">\(E[Y_i | X_i] = E[\mu_i | X_i]\)</span>, we can still learn the Bayes estimator by regressing <span class="math inline">\(Y_i\)</span> on <span class="math inline">\(X_i\)</span>.</p>
+</div>
+<div class="fragment">
+<p>Note that if <span class="math inline">\(\sigma^2 = 1\)</span>, then the linear regression coefficient is <span class="math display">\[ \frac{\text{Cov}(X_i, Y_i)}{\text{Var}(X_i)} = \frac{A}{A + 1 + \tau^2}, \]</span> which is close to the Bayes estimator.</p>
+</div>
+</section>
+<section id="simulation-of-eb-data-fission" class="slide level2 scrollable smaller">
+<h2>Simulation of EB Data Fission</h2>
+<div id="qwebr-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="extensions-1" class="slide level2">
+<h2>Extensions</h2>
+<div>
+<ul>
+<li class="fragment">There are also data fission recipes for other parametric families, such as Poisson.</li>
+<li class="fragment">More about data fission in Jacob Bien’s seminar next week?</li>
+</ul>
+</div>
+</section></section>
+<section id="summary" class="title-slide slide level1 smaller scrollable">
+<h1>Summary</h1>
 <div>
 <ul>
 <li class="fragment">Empirical Bayes is an attractive framework for estimation problems.</li>
 <li class="fragment">But it usually requires parametric assumptions about the prior, likelihood, or both.</li>
 <li class="fragment">AURORA is an adaptive way of doing Empirical Bayes fully nonparametrically, but it requires replicates.</li>
+<li class="fragment">By using data fission, AURORA can also be done without replication.</li>
 </ul>
 </div>
 <div class="fragment">
@@ -1907,18 +2015,30 @@ Efron, Bradley, and Carl Morris. 1973. <span>“Stein’s Estimation Rule and It
 <div id="ref-ignatiadis2023empirical" class="csl-entry" role="listitem">
 Ignatiadis, Nikolaos, Sujayam Saha, Dennis L Sun, and Omkar Muralidharan. 2023. <span>“Empirical Bayes Mean Estimation with Nonparametric Errors via Order Statistic Regression on Replicated Data.”</span> <em>Journal of the American Statistical Association</em> 118 (542): 987–99.
 </div>
+<div id="ref-ignatiadis2024fission" class="csl-entry" role="listitem">
+Ignatiadis, Nikolaos, and Dennis L Sun. 2024. <span>“Empirical Bayes Estimation via Data Fission.”</span> <em>Journal of the American Statistical Association</em>.
+</div>
+<div id="ref-leiner2023data" class="csl-entry" role="listitem">
+Leiner, James, Boyan Duan, Larry Wasserman, and Aaditya Ramdas. 2023. <span>“Data Fission: Splitting a Single Data Point.”</span> <em>Journal of the American Statistical Association</em>, 1–12.
+</div>
 <div id="ref-stein1956inadmissibility" class="csl-entry" role="listitem">
 Stein, Charles. 1956. <span>“Inadmissibility of the Usual Estimator for the Mean of a Multivariate Normal Distribution.”</span> In <em>Proceedings of the Third Berkeley Symposium on Mathematical Statistics and Probability</em>, 3:197–207. University of California Press.
 </div>
+<div id="ref-stigler1990galton" class="csl-entry" role="listitem">
+Stigler, Stephen M. 1990. <span>“The 1988 Neyman Memorial Lecture: A Galtonian Perspective on Shrinkage Estimators.”</span> <em>Statistical Science</em>, 147–55.
 </div>
-<div class="quarto-auto-generated-content">
+<div id="ref-tian2018selective" class="csl-entry" role="listitem">
+Tian, Xiaoying, and Jonathan Taylor. 2018. <span>“Selective Inference with a Randomized Response.”</span> <em>The Annals of Statistics</em> 46 (2): 679–710.
+</div>
+</div>
+
+</div>
+</section>
+    <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
 </div>
-</div>
-</div>
-</section></section>
-    </div>
+</div></div>
   </div>
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
@@ -2102,7 +2222,7 @@ Stein, Charles. 1956. <span>“Inadmissibility of the Usual Estimator for the Me
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -2242,24 +2362,6 @@ Stein, Charles. 1956. <span>“Inadmissibility of the Usual Estimator for the Me
         // clear code selection
         e.clearSelection();
       });
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp('/' + window.location.host + '/');
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-        }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
-            }
-          }
-        }
       function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
         const config = {
           allowHTML: true,
@@ -2296,11 +2398,7 @@ Stein, Charles. 1956. <span>“Inadmissibility of the Usual Estimator for the Me
           try { href = new URL(href).hash; } catch {}
           const id = href.replace(/^#\/?/, "");
           const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
-          }
+          return note.innerHTML;
         });
       }
       const findCites = (el) => {
