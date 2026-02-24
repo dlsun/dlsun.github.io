@@ -1,0 +1,8 @@
+/*-- scss:defaults --*/
+// (use defaults)
+
+/*-- scss:rules --*/
+// Hide WebR status on the title slide only
+#title-slide #qwebr-status-message-area {
+  display: none !important;
+}
