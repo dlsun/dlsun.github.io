@@ -642,7 +642,7 @@
   };
 
   // Store cell data
-  globalThis.qwebrCellDetails = [{"options":{"warning":"true","editor-font-scale":"0.5","fig-cap":"","editor-word-wrap":"true","classes":"","autorun":"false","dpi":72,"fig-height":5,"context":"interactive","results":"markup","editor-max-height":"","label":"unnamed-chunk-1","out-width":"700px","message":"true","comment":"","output":"true","out-height":"","read-only":"false","editor-quick-suggestions":"false","fig-width":7},"code":"x <- runif(100, min=0, max=1)\nmean(1 / (gamma(1/3) * gamma(2/3)) * x^(-2/3) * (1 - x)^(-1/3) * x)","id":1},{"options":{"warning":"true","editor-font-scale":"0.5","fig-cap":"","editor-word-wrap":"true","classes":"","autorun":"false","dpi":72,"fig-height":5,"context":"interactive","results":"markup","editor-max-height":"","label":"unnamed-chunk-2","out-width":"700px","message":"true","comment":"","output":"true","out-height":"","read-only":"false","editor-quick-suggestions":"false","fig-width":7},"code":"x <- rbeta(100, 1/3, 2/3)\nmean(x)","id":2}];
+  globalThis.qwebrCellDetails = [{"code":"x <- runif(100, min=0, max=1)\nmean(1 / (gamma(1/3) * gamma(2/3)) * x^(-2/3) * (1 - x)^(-1/3) * x)","options":{"results":"markup","label":"unnamed-chunk-1","output":"true","classes":"","out-width":"700px","fig-width":7,"dpi":72,"context":"interactive","autorun":"false","editor-quick-suggestions":"false","read-only":"false","editor-font-scale":"0.5","message":"true","warning":"true","out-height":"","fig-cap":"","editor-max-height":"","fig-height":5,"comment":"","editor-word-wrap":"true"},"id":1},{"code":"x <- rbeta(100, 1/3, 2/3)\nmean(x)","options":{"results":"markup","label":"unnamed-chunk-2","output":"true","classes":"","out-width":"700px","fig-width":7,"dpi":72,"context":"interactive","autorun":"false","editor-quick-suggestions":"false","read-only":"false","editor-font-scale":"0.5","message":"true","warning":"true","out-height":"","fig-cap":"","editor-max-height":"","fig-height":5,"comment":"","editor-word-wrap":"true"},"id":2}];
 
   </script>
   <script type="module">
@@ -2250,7 +2250,7 @@ Stats 305B
 </div></div>
 </div>
 <div class="fragment">
-<p>This suggests using any machine learning algorithm to learn <span class="math inline">\(Q(X) := E_S[Y | X]\)</span> from the source data, sampling <span class="math inline">\(X_1, \dots, X_n \sim P_T\)</span>, and estimating the target mean as <span class="math display">\[
+<p>This suggests using any machine learning algorithm to learn <span class="math inline">\(Q(X) := E_S[Y | X]\)</span> from the source data, sampling <span class="math inline">\(X_i \sim P_T\)</span> and estimating the target mean as <span class="math display">\[
   \hat E_T[Y] = \frac{1}{|T|} \sum_{i \in T} \hat Q(X_i).
 \]</span></p>
 </div>
@@ -2272,8 +2272,8 @@ Stats 305B
 <p>(In general, <span class="math inline">\(w(x)\)</span> will exist by the Radon-Nikodym Theorem.)</p>
 </div>
 <div class="fragment">
-<p>This suggests the following estimator of the target mean <span class="math display">\[
-  \hat E_T[Y] = \frac{1}{n} \sum_{i \in S} w(X_i) Y_i
+<p>This suggests sampling <span class="math inline">\((X_i, Y_i) \sim P_S\)</span> and estimating the target mean as <span class="math display">\[
+  \hat E_T[Y] = \frac{1}{|S|} \sum_{i \in S} w(X_i) Y_i
 \]</span></p>
 </div>
 </section>
@@ -2313,8 +2313,11 @@ Stats 305B
 </div>
 <div class="fragment">
 <p>and convert it to <span class="math display">\[
-   w(x) = \frac{P(X = x | A = 1)}{P(X = x | A = 0)} = \frac{|S|}{|T|} \frac{e(x)}{1 - e(x)}.
+   w(x) = \frac{P(X = x | A = 1)}{P(X = x | A = 0)} = \frac{P(A=0)}{P(A=1)} \frac{e(x)}{1 - e(x)}.
 \]</span></p>
+</div>
+<div class="fragment">
+<p>Therefore, once we have <span class="math inline">\(\hat e(x)\)</span>, the weights are <span class="math inline">\(\displaystyle \hat w(x) = \frac{|S|}{|T|} \frac{\hat e(x)}{1 - \hat e(x)}\)</span>.</p>
 </div>
 </section>
 <section id="the-dangers-of-weighting" class="slide level2">
